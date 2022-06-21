@@ -7,7 +7,7 @@ public class Character : MonoBehaviour
 {
     [SerializeField] protected int level;
     [SerializeField] protected int hitPoints, flowPoints;
-    [SerializeField] protected int maxHitPoints, maxFlowPoints, powerSkillPoints, fluiditySkillPoints, accuracySkillPoints, resistanceSkillPoints, evasionSkillPoints, charismaSkillPoints, defenseSkillPoints;
+    [SerializeField] protected int maxHitPoints, maxFlowPoints, powerSkillPoints, fluiditySkillPoints, accuracySkillPoints, resistanceSkillPoints, evasionSkillPoints, speedSkillPoints, charismaSkillPoints, defenseSkillPoints;
     [SerializeField] protected int swiftnessStat, gritStat, eloquenceStat, aptitudeStat, insightStat, vigorStat;
     [SerializeField] public Slider healthBar;
     protected bool myTurn = false;
@@ -33,8 +33,11 @@ public class Character : MonoBehaviour
         float res = level + ((float)(insightStat + gritStat) / 2);
         resistanceSkillPoints = (int)res;
 
-        float ev = swiftnessStat + ((float)eloquenceStat / 2) + ((float)level / 4);
+        float ev = swiftnessStat + ((float)eloquenceStat / 2) + ((float)(level+gritStat) / 4);
         evasionSkillPoints = (int)ev;
+
+        float sp = swiftnessStat + ((float)eloquenceStat / 2) + ((float)level / 4);
+        evasionSkillPoints = (int)sp;
 
         float cha = eloquenceStat + ((float)(aptitudeStat + level) / 4);
         charismaSkillPoints = (int)cha;
@@ -91,6 +94,9 @@ public class Character : MonoBehaviour
     public int GetEvasionSkill() { return evasionSkillPoints; }
     public void SetEvasionSkill(int evasion) { evasionSkillPoints = evasion; }
 
+    public int GetSpeedSkill() { return speedSkillPoints; }
+    public void SetSpeedSkill(int speed) { speedSkillPoints = speed; }
+
     public int GetCharismaSkill() { return charismaSkillPoints; }
     public void SetCharismaSkill(int charisma) { charismaSkillPoints = charisma; }
     public int GetDefenseSkill() { return defenseSkillPoints; }
@@ -107,5 +113,9 @@ public class Character : MonoBehaviour
         healthBar.value = (float)GetHitPoints() / (float)GetMaxHitPoints();
         if (hitPoints <= 0)
             isDead = true;
+    }
+    public void GetEvasionRoll(out int evasion)
+    {
+        evasion = Random.Range(evasionSkillPoints - (evasionSkillPoints / 5), evasionSkillPoints + (evasionSkillPoints / 5));
     }
 }

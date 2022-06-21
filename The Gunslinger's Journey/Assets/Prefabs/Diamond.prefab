@@ -375,16 +375,17 @@ MonoBehaviour:
   accuracySkillPoints: 0
   resistanceSkillPoints: 0
   evasionSkillPoints: 0
+  speedSkillPoints: 0
   charismaSkillPoints: 0
   defenseSkillPoints: 0
   swiftnessStat: 3
-  gritStat: 3
+  gritStat: 7
   eloquenceStat: 3
-  aptitudeStat: 3
-  insightStat: 3
-  vigorStat: 3
+  aptitudeStat: 5
+  insightStat: 4
+  vigorStat: 6
   healthBar: {fileID: 8559566456588818166}
-  attackDamage: 9
+  attackDamage: 4
 --- !u!1 &6911585663546977405
 GameObject:
   m_ObjectHideFlags: 0
