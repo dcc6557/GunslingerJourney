@@ -50,5 +50,5 @@ MonoBehaviour:
   physEffect: 0
   mentEffect: 0
   spiritEffect: 0
-  baseDamage: 6
+  baseDamage: 12
   itemName: Flow Revolver
