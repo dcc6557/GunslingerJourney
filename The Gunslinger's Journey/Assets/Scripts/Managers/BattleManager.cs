@@ -12,7 +12,7 @@ public class BattleManager : MonoBehaviour
     [SerializeField] private GameObject playerPrefab;
     [SerializeField] private GameObject diamondPrefab;
     [SerializeField] private Canvas BattleUI;
-    [SerializeField] private Image flowBox;
+    [SerializeField] private Image flowPanel;
     [SerializeField] private TextMeshProUGUI battleText;
     [SerializeField] private TextMeshProUGUI weaponName;
     [SerializeField] private List<GameObject> turnOrder;
@@ -47,7 +47,7 @@ public class BattleManager : MonoBehaviour
         currentTurn = 0;
         turnOrder = new List<GameObject>();
         playerObject = Instantiate(playerPrefab);
-        playerObject.transform.position = new Vector3(-5.0f, -1.0f);
+        playerObject.transform.position = new Vector3(-75.0f, -10.0f);
         playerScript = playerObject.GetComponent<Player>();
         playerScript.SetUpCharacter();
         turnOrder.Add(playerObject);
@@ -56,10 +56,16 @@ public class BattleManager : MonoBehaviour
         allEnemies = new List<GameObject>();
         enemy = Instantiate(diamondPrefab);
         enemyScript = enemy.GetComponent<Enemy>();
-        enemy.transform.position = new Vector3(1.0f, 1.0f);
+        enemy.transform.position = new Vector3(50.0f, 25.0f);
         allEnemies.Add(enemy);
 
         attackButton.onClick.AddListener(() => SetPlayerAction(playerAction.Attack));
+        flowButton.onClick.AddListener(() => SetPlayerAction(playerAction.Flow));
+        cancelFlow.onClick.AddListener(() => SetPlayerAction(playerAction.Unselected));
+        cancelFlow.onClick.AddListener(() => flowPanel.gameObject.SetActive(false));
+
+        flowPanel.gameObject.SetActive(false);
+        weaponName.text = playerScript.GetWeapon().name;
 
         //Insert all the enemies into the turn order
         foreach (GameObject foe in allEnemies)
@@ -106,7 +112,6 @@ public class BattleManager : MonoBehaviour
 
         playerScript.healthBar.value = (float)playerScript.GetHitPoints() / playerScript.GetMaxHitPoints();
         playerScript.flowBar.value = (float)playerScript.GetFlowPoints() / playerScript.GetMaxFlowPoints();
-
         foreach (GameObject foe in allEnemies)
         {
             Enemy enemyScript = foe.GetComponent<Enemy>();
@@ -121,53 +126,7 @@ public class BattleManager : MonoBehaviour
         {
             turnOrder[currentTurn].GetComponent<Character>().SetTurn(true);
             if (playerScript.GetTurn())
-            {
-                battleText.text = "Your turn!";
-                if (action == playerAction.Unselected)
-                {
-                    attackButton.interactable = true;
-                    flowButton.interactable = true;
-                }
-                else
-                {
-                    attackButton.interactable = false;
-                    flowButton.interactable = false;
-                }
-            }
-            if (playerScript.GetTurn() && action == playerAction.Attack)
-            {
-                attackButton.interactable = false;
-                timer += Time.deltaTime;
-                if(timer > 0 && timer < buffer)
-                    battleText.text = "You attack!";
-                else if (timer >= buffer)
-                {
-                    if (!gotAttackRolls)
-                    {
-                        playerScript.Attack(out damage, out accuracy);
-                        enemyScript.GetEvasionRoll(out evasion);
-                        if (evasion > accuracy)
-                            DodgeCheck();
-                        else if (accuracy > evasion)
-                            CriticalHitCheck();
-                        gotAttackRolls = true;
-                    }
-                    battleText.text = "You dealt " + damage + " damage!\nAccuracy Roll: " + accuracy + " Evasion Roll: " + evasion + "\n";
-                    if (criticalHit)
-                        battleText.text += " A critical hit!!!";
-                    if (damage == 0)
-                        battleText.text += " The enemy dodged your attack!";
-                    if (timer >= buffer * 1.75)
-                    {
-                        enemyScript.ModifyHealth(-damage);
-                        if (!endConditionsMet)
-                            NextTurn();
-                        action = playerAction.Unselected;
-                        gotAttackRolls = false;
-                        criticalHit = false;
-                    }
-                }
-            }
+                PlayerTurn(action);
             if (enemyScript.GetTurn() && !enemyScript.GetDead())
             {
                 timer += Time.deltaTime;
@@ -238,23 +197,55 @@ public class BattleManager : MonoBehaviour
             turnOrder[currentTurn].GetComponent<Character>().SetTurn(true);
         timer = 0.0f;
     }
-    /// <summary>
-    /// Check if the conditions have been met for the battle to be over.
-    /// </summary>
-    public void IsBattleOver()
+    public void PlayerTurn(playerAction act)
     {
-        if (allEnemies.Count == 0)
+        if (act == playerAction.Unselected)
         {
-            endConditionsMet = true;
-            battleText.text = "You win!";
+            battleText.text = "Your turn!";
+            attackButton.interactable = true;
+            flowButton.interactable = true;
         }
-        if (playerScript.GetDead())
+        else if (act == playerAction.Attack)
         {
-            endConditionsMet = true;
-            battleText.text = "You lose!";
-        }
-        if (endConditionsMet)
             attackButton.interactable = false;
+            flowButton.interactable = false;
+            timer += Time.deltaTime;
+            if (timer > 0 && timer < buffer)
+                battleText.text = "You attack!";
+            else if (timer >= buffer)
+            {
+                if (!gotAttackRolls)
+                {
+                    playerScript.Attack(out damage, out accuracy);
+                    enemyScript.GetEvasionRoll(out evasion);
+                    if (evasion > accuracy)
+                        DodgeCheck();
+                    else if (accuracy > evasion)
+                        CriticalHitCheck();
+                    gotAttackRolls = true;
+                }
+                battleText.text = "You dealt " + damage + " damage!\nAccuracy Roll: " + accuracy + " Evasion Roll: " + evasion + "\n";
+                if (criticalHit)
+                    battleText.text += " A critical hit!!!";
+                if (damage == 0)
+                    battleText.text += " The enemy dodged your attack!";
+                if (timer >= buffer * 1.75)
+                {
+                    enemyScript.ModifyHealth(-damage);
+                    if (!endConditionsMet)
+                        NextTurn();
+                    action = playerAction.Unselected;
+                    gotAttackRolls = false;
+                    criticalHit = false;
+                }
+            }
+        }
+        else if (act == playerAction.Flow)
+        {
+            flowPanel.gameObject.SetActive(true);
+            attackButton.interactable = false;
+            flowButton.interactable = false;
+        }
     }
     public void CriticalHitCheck()
     {
@@ -303,4 +294,26 @@ public class BattleManager : MonoBehaviour
         if (dodgeRoll >= 1.0f)
             damage = 0;
     }
+    /// <summary>
+    /// Check if the conditions have been met for the battle to be over.
+    /// </summary>
+    public void IsBattleOver()
+    {
+        if (allEnemies.Count == 0)
+        {
+            endConditionsMet = true;
+            battleText.text = "You win!";
+        }
+        if (playerScript.GetDead())
+        {
+            endConditionsMet = true;
+            battleText.text = "You lose!";
+        }
+        if (endConditionsMet)
+        {
+            attackButton.interactable = false;
+            flowButton.interactable = false;
+        }
+    }
 }
+

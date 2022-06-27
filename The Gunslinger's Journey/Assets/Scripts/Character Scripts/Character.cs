@@ -14,7 +14,7 @@ public class Character : MonoBehaviour
     protected bool myTurn = false;
     protected bool isDead = false;
 
-    public void SetUpCharacter()
+    virtual public void SetUpCharacter()
     {
         float hp = (gritStat + ((float)vigorStat / 2) + level) * 8;
         maxHitPoints = (int)hp;
@@ -108,7 +108,7 @@ public class Character : MonoBehaviour
     public bool GetDead() { return isDead; }
     public void SetDead(bool dead) { isDead = dead; }
 
-    public void ModifyHealth(int modifier)
+    virtual public void ModifyHealth(int modifier)
     {
         hitPoints += modifier;
         healthBar.value = (float)GetHitPoints() / GetMaxHitPoints();
