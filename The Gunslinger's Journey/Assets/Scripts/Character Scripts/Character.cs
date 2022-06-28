@@ -111,9 +111,20 @@ public class Character : MonoBehaviour
     virtual public void ModifyHealth(int modifier)
     {
         hitPoints += modifier;
-        healthBar.value = (float)GetHitPoints() / GetMaxHitPoints();
         if (hitPoints <= 0)
             isDead = true;
+        else if (hitPoints > GetMaxHitPoints())
+            hitPoints = GetMaxHitPoints();
+        healthBar.value = (float)GetHitPoints() / GetMaxHitPoints();
+    }
+    virtual public void ModifyFlow(int modifier)
+    {
+        flowPoints += modifier;
+        if (flowPoints < 0)
+            flowPoints = 0;
+        else if (flowPoints > GetMaxFlowPoints())
+            flowPoints = GetMaxFlowPoints();
+        flowBar.value = (float)GetFlowPoints() / GetMaxFlowPoints();
     }
     public void GetEvasionRoll(out int evasion)
     {

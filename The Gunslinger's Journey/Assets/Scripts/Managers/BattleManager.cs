@@ -245,27 +245,82 @@ public class BattleManager : MonoBehaviour
             flowPanel.gameObject.SetActive(true);
             attackButton.interactable = false;
             flowButton.interactable = false;
+            if (playerScript.flowMove == flowMove.Attack)
+            {
+                ProcessFlowAttack();
+            }
         }
     }
-    public void CriticalHitCheck()
+    public void ProcessFlowAttack()
+    {
+        timer += Time.deltaTime;
+        if (timer > 0 && timer < buffer)
+            battleText.text = "You fire your revolver!";
+        else if (timer >= buffer)
+        {
+            if (!gotAttackRolls)
+            {
+                playerScript.FlowAttack(9, 7, out damage, out accuracy);
+                enemyScript.GetEvasionRoll(out evasion);
+                if (evasion > accuracy)
+                    DodgeCheck();
+                else if (accuracy > evasion)
+                    CriticalHitCheck(true);
+                gotAttackRolls = true;
+            }
+            battleText.text = "You dealt " + damage + " damage!\nAccuracy Roll: " + accuracy + " Evasion Roll: " + evasion + "\n";
+            if (criticalHit)
+                battleText.text += " A critical hit!!!";
+            if (damage == 0)
+                battleText.text += " The enemy dodged your attack!";
+            if (timer >= buffer * 1.75)
+            {
+                enemyScript.ModifyHealth(-damage);
+                if (!endConditionsMet)
+                    NextTurn();
+                action = playerAction.Unselected;
+                playerScript.flowMove = flowMove.Unselected;
+                gotAttackRolls = false;
+                criticalHit = false;
+            }
+        }
+    }
+    public void CriticalHitCheck(bool isFlow = false)
     {
         float critChance;
         float critRoll;
-        if (accuracy >= (evasion * 2.5))
-            critChance = 1f;
-        else if (accuracy >= (evasion * 2))
-            critChance = 0.9f;
-        else if (accuracy >= (evasion + (evasion / 1.5)))
-            critChance = 0.75f;
-        else if (accuracy >= (evasion + (evasion / 3)))
-            critChance = 0.5f;
-        else if (accuracy >= (evasion + (evasion / 4)))
-            critChance = 0.25f;
+        if (isFlow)
+        {
+            if (accuracy >= (evasion * 2.5))
+                critChance = 0.9f;
+            else if (accuracy >= (evasion * 2))
+                critChance = 0.7f;
+            else if (accuracy >= (evasion + (evasion / 1.5)))
+                critChance = 0.55f;
+            else if (accuracy >= (evasion + (evasion / 3)))
+                critChance = 0.25f;
+            else if (accuracy >= (evasion + (evasion / 4)))
+                critChance = 0.10f;
+            else
+                critChance = 0.025f;
+        }
         else
-            critChance = 0.05f;
+        {
+            if (accuracy >= (evasion * 2.5))
+                critChance = 1f;
+            else if (accuracy >= (evasion * 2))
+                critChance = 0.9f;
+            else if (accuracy >= (evasion + (evasion / 1.5)))
+                critChance = 0.75f;
+            else if (accuracy >= (evasion + (evasion / 3)))
+                critChance = 0.5f;
+            else if (accuracy >= (evasion + (evasion / 4)))
+                critChance = 0.25f;
+            else
+                critChance = 0.05f;
+        }
         critRoll = Random.Range(0f, 1.0f);
         critRoll += critChance;
-
         if (critRoll >= 1.0f)
         {
             damage *= 2;

@@ -4,6 +4,8 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
+public enum flowMove { Unselected, Attack, Heal }
+
 public class Player : Character
 {
     [SerializeField] GameObject weapon;
@@ -11,6 +13,7 @@ public class Player : Character
     [SerializeField] GameObject accessory;
     [SerializeField] TextMeshProUGUI healthText;
     [SerializeField] TextMeshProUGUI flowText;
+    [SerializeField] public flowMove flowMove = flowMove.Unselected;
 
     private Weapon weaponScript;
 
@@ -30,18 +33,24 @@ public class Player : Character
         int baseDamage = weaponScript.GetBaseDamage() + powerSkillPoints;
         totalDamage = Random.Range(baseDamage - (baseDamage / 5), baseDamage + (baseDamage / 5));
     }
-    public void FlowHeal(out int totalRecovery)
+    public void FlowHeal(int flowCost, int baseHeal, out int totalRecovery)
     {
-        totalRecovery = Random.Range(GetFluiditySkill() - (GetFluiditySkill() / 5), GetFluiditySkill() + (GetFluiditySkill() / 5));
+        flowMove = flowMove.Heal;
+        baseHeal += fluiditySkillPoints;
+        totalRecovery = Random.Range(baseHeal - (baseHeal / 5), baseHeal + (baseHeal / 5));
+        ModifyFlow(-flowCost);
     }
-    public void FlowAttack(out int totalDamage, out int accuracy)
+    public void FlowAttack(int baseDamage, int flowCost, out int totalDamage, out int accuracy)
     {
+        flowMove = flowMove.Attack;
         weaponScript = weapon.GetComponent<Weapon>();
+
+        baseDamage += fluiditySkillPoints;
 
         accuracy = Random.Range(accuracySkillPoints - (accuracySkillPoints / 5), accuracySkillPoints + (accuracySkillPoints / 5));
 
-        int baseDamage = weaponScript.GetBaseDamage() + fluiditySkillPoints;
         totalDamage = Random.Range(baseDamage - (baseDamage / 5), baseDamage + (baseDamage / 5));
+        ModifyFlow(-flowCost);
     }
 
     public override void ModifyHealth(int modifier)
@@ -49,7 +58,14 @@ public class Player : Character
         base.ModifyHealth(modifier);
         healthText.text = GetHitPoints() + " / " + GetMaxHitPoints();
     }
+    public override void ModifyFlow(int modifier)
+    {
+        base.ModifyFlow(modifier);
+        flowText.text = GetFlowPoints() + " / " + GetMaxFlowPoints();
+    }
     public Weapon GetWeapon() { return weapon.GetComponent<Weapon>(); }
+
+    public void SetFlowMove(flowMove flow) { flowMove = flow; }
 }
 
 
