@@ -138,15 +138,13 @@ public class BattleManager : MonoBehaviour
                 PlayerTurn(action);
             if (enemyScript.GetTurn() && !enemyScript.GetDead())
                 EnemyTurn();
-            if (allEnemies.Count > 0)
+            for (int x = allEnemies.Count - 1; x >= 0; x--)
             {
-                foreach (GameObject foe in allEnemies)
+                Enemy foe = allEnemies[x].GetComponent<Enemy>();
+                if (foe.GetDead())
                 {
-                    if (foe.GetComponent<Enemy>().GetDead())
-                    {
-                        foe.SetActive(false);
-                        allEnemies.Remove(foe);
-                    }
+                    allEnemies[x].SetActive(false);
+                    allEnemies.RemoveAt(x);
                 }
             }
         }
@@ -294,8 +292,10 @@ public class BattleManager : MonoBehaviour
                 else if (healthPercentage >= 0.75)
                     healChance = 0.1f;
                 else if (healthPercentage >= 0.5)
-                    healChance = 0.45f;
+                    healChance = 0.35f;
                 else if (healthPercentage >= 0.25)
+                    healChance = 0.55f;
+                else
                     healChance = 0.85f;
                 healChance += Random.Range(0.0f, 1.0f);
             }
@@ -366,7 +366,7 @@ public class BattleManager : MonoBehaviour
         {
             if (!gotAttackRolls)
             {
-                playerScript.FlowAttack(11, 9, out damage, out accuracy);
+                playerScript.FlowAttack(15, 9, out damage, out accuracy);
                 enemyScript.GetEvasionRoll(out evasion);
                 if (evasion > accuracy)
                     DodgeCheck();
