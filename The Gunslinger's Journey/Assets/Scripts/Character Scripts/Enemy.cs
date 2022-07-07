@@ -5,6 +5,8 @@ using UnityEngine;
 public class Enemy : Character
 {
     [SerializeField] int attackDamage;
+    [SerializeField] bool isBoss;
+
     public void Attack(out int totalDamage, out int accuracy)
     {
         accuracy = Random.Range(accuracySkillPoints - (accuracySkillPoints / 5), accuracySkillPoints + (accuracySkillPoints / 5));
