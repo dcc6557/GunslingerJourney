@@ -33,14 +33,13 @@ public class Player : Character
         int baseDamage = weaponScript.GetBaseDamage() + powerSkillPoints;
         totalDamage = Random.Range(baseDamage - (baseDamage / 5), baseDamage + (baseDamage / 5));
     }
-    public void FlowHeal(int flowCost, int baseHeal, out int totalRecovery)
+    public void FlowHeal(int baseHeal, out int totalRecovery)
     {
         flowMove = flowMove.Heal;
         baseHeal += fluiditySkillPoints;
         totalRecovery = Random.Range(baseHeal - (baseHeal / 5), baseHeal + (baseHeal / 5));
-        ModifyFlow(-flowCost);
     }
-    public void FlowAttack(int baseDamage, int flowCost, out int totalDamage, out int accuracy)
+    public void FlowAttack(int baseDamage, out int totalDamage, out int accuracy)
     {
         flowMove = flowMove.Attack;
         weaponScript = weapon.GetComponent<Weapon>();
@@ -50,7 +49,6 @@ public class Player : Character
         accuracy = Random.Range(accuracySkillPoints - (accuracySkillPoints / 5), accuracySkillPoints + (accuracySkillPoints / 5));
 
         totalDamage = Random.Range(baseDamage - (baseDamage / 5), baseDamage + (baseDamage / 5));
-        ModifyFlow(-flowCost);
     }
 
     public override void ModifyHealth(int modifier)
