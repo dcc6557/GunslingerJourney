@@ -52,7 +52,7 @@ public class BattleManager : MonoBehaviour
         currentTurn = 0;
         turnOrder = new List<GameObject>();
         playerObject = Instantiate(playerPrefab);
-        playerObject.transform.position = new Vector3(-75.0f, -10.0f);
+        playerObject.transform.position = new Vector3(-3.75f, -0.5f);
         playerScript = playerObject.GetComponent<Player>();
         playerScript.SetUpCharacter();
         turnOrder.Add(playerObject);
@@ -61,12 +61,12 @@ public class BattleManager : MonoBehaviour
         allEnemies = new List<GameObject>();
         allEnemyTargets = new List<Button>();
         allEnemies.Add(Instantiate(diamondPrefab));
-        allEnemies[0].transform.position = new Vector3(50.0f, 25.0f);
+        allEnemies[0].transform.position = new Vector3(2.5f, 1.75f);
         allEnemies[0].name = "DiaMan";
         allEnemies[0].GetComponent<Enemy>().SetEnemyName(allEnemies[0].name);
         allEnemies.Add(Instantiate(diamondPrefab));
         allEnemyTargets.Add(Instantiate(targetButtonPrefab));
-        allEnemies[1].transform.position = new Vector3(50.0f, -25.0f);
+        allEnemies[1].transform.position = new Vector3(2.1f, -1.0f);
         allEnemies[1].name = "DiaBoy";
         allEnemies[1].GetComponent<Enemy>().SetEnemyName(allEnemies[1].name);
         allEnemyTargets.Add(Instantiate(targetButtonPrefab));
