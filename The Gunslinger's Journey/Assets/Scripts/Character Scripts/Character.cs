@@ -49,8 +49,7 @@ public class Character : MonoBehaviour
         hitPoints = maxHitPoints;
         flowPoints = maxFlowPoints;
     }
-
-
+    
     public int GetHitPoints() { return hitPoints; }
     public void SetHitPoints(int hp) { hitPoints = hp; }
     
