@@ -17,9 +17,9 @@ public class Player : Character
 
     private Weapon weaponScript;
 
-    public override void SetUpCharacter()
+    public override void SetUpCharacter(int currentHP = -1, int currentFP = -1)
     {
-        base.SetUpCharacter();
+        base.SetUpCharacter(currentHP, currentFP);
         healthText.text = GetHitPoints() + " / " + GetMaxHitPoints();
         flowText.text = GetFlowPoints() + " / " + GetMaxFlowPoints();
 

@@ -14,7 +14,7 @@ public class Character : MonoBehaviour
     protected bool myTurn = false;
     protected bool isDead = false;
 
-    virtual public void SetUpCharacter()
+    virtual public void SetUpCharacter(int currentHP = -1, int currentFP = -1)
     {
         float hp = (gritStat + ((float)vigorStat / 2) + level) * 8;
         maxHitPoints = (int)hp;
@@ -46,8 +46,14 @@ public class Character : MonoBehaviour
         float def = gritStat + ((float)vigorStat / 2) + ((float)level / 3);
         defenseSkillPoints = (int)def;
 
-        hitPoints = maxHitPoints;
-        flowPoints = maxFlowPoints;
+        if (currentHP == -1)
+            hitPoints = maxHitPoints;
+        else
+            hitPoints = currentHP;
+        if (currentFP == -1)
+            flowPoints = maxFlowPoints;
+        else
+            flowPoints = currentFP;
     }
     
     public int GetHitPoints() { return hitPoints; }

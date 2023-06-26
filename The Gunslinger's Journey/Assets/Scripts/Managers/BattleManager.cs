@@ -4,6 +4,8 @@ using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
 using TMPro;
+using UnityEngine.Tilemaps;
+using UnityEngine.SceneManagement;
 
 public enum playerAction { Unselected, Attack, Block, Flow }
 
@@ -24,6 +26,7 @@ public class BattleManager : MonoBehaviour
     [SerializeField] private Button flowAttack;
     [SerializeField] private Button cancelFlow;
     [SerializeField] private Button cancelTarget;
+    private OverworldManager overworldScript;
     bool endConditionsMet = false;
     bool gotAttackRolls = false;
     bool criticalHit = false;
@@ -592,21 +595,25 @@ public class BattleManager : MonoBehaviour
     /// </summary>
     public void IsBattleOver()
     {
-        if (allEnemies.Count == 0)
-        {
-            endConditionsMet = true;
-            battleText.text = "You win!";
-        }
         if (playerScript.GetDead())
         {
             endConditionsMet = true;
             battleText.text = "You lose!";
+        }
+        else if (allEnemies.Count == 0)
+        {
+            endConditionsMet = true;
+            battleText.text = "You win!";
         }
         if (endConditionsMet)
         {
             attackButton.interactable = false;
             flowButton.interactable = false;
         }
+    }
+    private void BackToOverworld()
+    {
+
     }
 }
 
