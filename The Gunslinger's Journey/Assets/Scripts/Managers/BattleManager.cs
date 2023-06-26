@@ -57,7 +57,7 @@ public class BattleManager : MonoBehaviour
         playerObject = Instantiate(playerPrefab);
         playerObject.transform.position = new Vector3(-3.75f, -0.5f);
         playerScript = playerObject.GetComponent<Player>();
-        playerScript.SetUpCharacter();
+        playerScript.SetUpCharacter(PlayerStats.Health, PlayerStats.Flow);
         turnOrder.Add(playerObject);
 
         //Make the enemies
@@ -602,8 +602,12 @@ public class BattleManager : MonoBehaviour
         }
         else if (allEnemies.Count == 0)
         {
+            timer += Time.deltaTime;
             endConditionsMet = true;
-            battleText.text = "You win!";
+            if (timer > 0 && timer < buffer)
+                battleText.text = "You win!";
+            else if (timer >= buffer)
+                ToOverworld();
         }
         if (endConditionsMet)
         {
@@ -611,9 +615,11 @@ public class BattleManager : MonoBehaviour
             flowButton.interactable = false;
         }
     }
-    private void BackToOverworld()
+    private void ToOverworld()
     {
-
+        PlayerStats.Health = playerScript.GetHitPoints();
+        PlayerStats.Flow = playerScript.GetFlowPoints();
+        SceneManager.LoadScene(1);
     }
 }
 

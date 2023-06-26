@@ -32,6 +32,7 @@ public class OverworldManager : MonoBehaviour
         playerWorldPosition = playerObject.transform.position;
         cameraLocalPosition = mainCamera.transform.localPosition;
         cameraWorldPosition = mainCamera.transform.position;
+        playerScript.SetUpCharacter(PlayerStats.Health, PlayerStats.Flow);
     }
 
     // Update is called once per frame
@@ -46,7 +47,9 @@ public class OverworldManager : MonoBehaviour
         if (Input.GetKey(KeyCode.A)) { playerCollider.velocity -= xMove; }
         if (Input.GetKey(KeyCode.D)) { playerCollider.velocity += xMove; }
     }
-    public void SetPlayerStats(Player battlePlayer)
+    private void ToBattle()
     {
+        PlayerStats.Health = playerScript.GetHitPoints();
+        PlayerStats.Flow = playerScript.GetFlowPoints();
     }
 }
