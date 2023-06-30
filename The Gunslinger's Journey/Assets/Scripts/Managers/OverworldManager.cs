@@ -33,6 +33,8 @@ public class OverworldManager : MonoBehaviour
         cameraLocalPosition = mainCamera.transform.localPosition;
         cameraWorldPosition = mainCamera.transform.position;
         playerScript.SetUpCharacter(PlayerStats.Health, PlayerStats.Flow);
+        playerScript.ModifyHealth();
+        playerScript.ModifyFlow();
     }
 
     // Update is called once per frame

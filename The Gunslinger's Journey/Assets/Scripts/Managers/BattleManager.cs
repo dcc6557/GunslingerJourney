@@ -63,16 +63,11 @@ public class BattleManager : MonoBehaviour
         //Make the enemies
         allEnemies = new List<GameObject>();
         allEnemyTargets = new List<Button>();
-        allEnemies.Add(Instantiate(diamondPrefab));
-        allEnemies[0].transform.position = new Vector3(2.5f, 1.75f);
-        allEnemies[0].name = "DiaMan";
-        allEnemies[0].GetComponent<Enemy>().SetEnemyName(allEnemies[0].name);
-        allEnemies.Add(Instantiate(diamondPrefab));
-        allEnemyTargets.Add(Instantiate(targetButtonPrefab));
-        allEnemies[1].transform.position = new Vector3(2.1f, -1.0f);
-        allEnemies[1].name = "DiaBoy";
-        allEnemies[1].GetComponent<Enemy>().SetEnemyName(allEnemies[1].name);
-        allEnemyTargets.Add(Instantiate(targetButtonPrefab));
+
+        //AddEnemyToList(diamondPrefab, new Vector3(2.5f, 1.75f), "DiaMan", targetButtonPrefab);
+
+        AddEnemyToList(diamondPrefab, new Vector3(2.1f, -1.0f), "DiaBoy", targetButtonPrefab);
+
         for (int x = 0; x < allEnemies.Count; x++)
         {
             GameObject thisEnemy = allEnemies[x];
@@ -194,6 +189,16 @@ public class BattleManager : MonoBehaviour
         button.onClick.AddListener(() => SetTarget(enemyObject));
         button.onClick.AddListener(() => { targetSelected = true; });
         button.onClick.AddListener(() => HideTargets());
+
+    }
+    public void AddEnemyToList(GameObject prefab, Vector3 position, string name, Button buttonPrefab)
+    {
+        allEnemies.Add(Instantiate(prefab));
+        int x = allEnemies.Count - 1;
+        allEnemies[x].transform.position = position;
+        allEnemies[x].name = name;
+        allEnemies[x].GetComponent<Enemy>().SetEnemyName(allEnemies[0].name);
+        allEnemyTargets.Add(Instantiate(buttonPrefab));
 
     }
 

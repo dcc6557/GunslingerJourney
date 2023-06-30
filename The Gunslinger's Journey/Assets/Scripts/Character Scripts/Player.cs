@@ -51,12 +51,12 @@ public class Player : Character
         totalDamage = Random.Range(baseDamage - (baseDamage / 5), baseDamage + (baseDamage / 5));
     }
 
-    public override void ModifyHealth(int modifier)
+    public override void ModifyHealth(int modifier = 0)
     {
         base.ModifyHealth(modifier);
         healthText.text = GetHitPoints() + " / " + GetMaxHitPoints();
     }
-    public override void ModifyFlow(int modifier)
+    public override void ModifyFlow(int modifier = 0)
     {
         base.ModifyFlow(modifier);
         flowText.text = GetFlowPoints() + " / " + GetMaxFlowPoints();
