@@ -39,17 +39,11 @@ public class BattleManager : MonoBehaviour
     private List<Button> allEnemyTargets;
     GameObject playerObject;
     GameObject target;
-    public float timer = 0.0f;
-    public float buffer = 3.0f;
     bool gotHealChance = false;
     int damage;
     int accuracy;
     int evasion;
 
-
-
-
-    // Start is called before the first frame update
     void Start()
     {
         currentTurn = 0;
@@ -66,7 +60,7 @@ public class BattleManager : MonoBehaviour
 
         //AddEnemyToList(diamondPrefab, new Vector3(2.5f, 1.75f), "DiaMan", targetButtonPrefab);
 
-        AddEnemyToList(diamondPrefab, new Vector3(2.1f, -1.0f), "DiaBoy", targetButtonPrefab);
+        AddEnemyToList(diamondPrefab, new Vector3(2.1f, -1.0f), targetButtonPrefab);
 
         for (int x = 0; x < allEnemies.Count; x++)
         {
@@ -147,7 +141,6 @@ public class BattleManager : MonoBehaviour
         }
     }
 
-    // Update is called once per frame
     void Update()
     {
         IsBattleOver();
@@ -173,11 +166,11 @@ public class BattleManager : MonoBehaviour
         }
         else if (!introTextSeen && !endConditionsMet)
         {
-            timer += Time.deltaTime;
-            if (timer >= buffer)
+            BattleStats.Timer += Time.deltaTime;
+            if (BattleStats.Timer >= BattleStats.Buffer)
             {
                 introTextSeen = true;
-                timer = 0.0f;
+                BattleStats.Timer = 0.0f;
             }
         }
     }
@@ -191,13 +184,13 @@ public class BattleManager : MonoBehaviour
         button.onClick.AddListener(() => HideTargets());
 
     }
-    public void AddEnemyToList(GameObject prefab, Vector3 position, string name, Button buttonPrefab)
+    public void AddEnemyToList(GameObject prefab, Vector3 position, Button buttonPrefab)
     {
         allEnemies.Add(Instantiate(prefab));
         int x = allEnemies.Count - 1;
         allEnemies[x].transform.position = position;
-        allEnemies[x].name = name;
-        allEnemies[x].GetComponent<Enemy>().SetEnemyName(allEnemies[0].name);
+        allEnemies[x].GetComponent<Enemy>().SetUpEnemy();
+        allEnemies[x].name = allEnemies[x].GetComponent<Enemy>().GetEnemyName();
         allEnemyTargets.Add(Instantiate(buttonPrefab));
 
     }
@@ -216,7 +209,7 @@ public class BattleManager : MonoBehaviour
             NextTurn();
         else
             turnOrder[currentTurn].GetComponent<Character>().SetTurn(true);
-        timer = 0.0f;
+        BattleStats.Timer = 0.0f;
         action = playerAction.Unselected;
         playerScript.flowMove = flowMove.Unselected;
         gotAttackRolls = false;
@@ -253,6 +246,8 @@ public class BattleManager : MonoBehaviour
 
     public void SelectEnemyTarget()
     {
+        attackButton.interactable = false;
+        flowButton.interactable = false;
         battleText.text = "Target?";
         if (!cancelTarget.gameObject.activeSelf)
         {
@@ -277,13 +272,11 @@ public class BattleManager : MonoBehaviour
 
     public void ProcessAttack()
     {
-        attackButton.interactable = false;
-        flowButton.interactable = false;
         Enemy targetScript = target.GetComponent<Enemy>();
-        timer += Time.deltaTime;
-        if (timer > 0 && timer < buffer)
+        BattleStats.Timer += Time.deltaTime;
+        if (BattleStats.Timer > 0 && BattleStats.Timer < BattleStats.Buffer)
             battleText.text = "You attack!";
-        else if (timer >= buffer)
+        else if (BattleStats.Timer >= BattleStats.Buffer)
         {
             if (!gotAttackRolls)
             {
@@ -300,7 +293,7 @@ public class BattleManager : MonoBehaviour
                 battleText.text += " A critical hit!!!";
             if (damage == 0)
                 battleText.text += target.name + " dodged your attack!";
-            if (timer >= buffer * 1.75)
+            if (BattleStats.Timer >= BattleStats.Buffer * 1.75)
             {
                 targetScript.ModifyHealth(-damage);
                 if (!endConditionsMet)
@@ -340,8 +333,8 @@ public class BattleManager : MonoBehaviour
                 flowAttack.interactable = false;
                 flowHeal.interactable = false;
                 cancelFlow.interactable = false;
-                timer += Time.deltaTime;
-                if (timer > 0 && timer < buffer)
+                BattleStats.Timer += Time.deltaTime;
+                if (BattleStats.Timer > 0 && BattleStats.Timer < BattleStats.Buffer)
                     battleText.text = "Not enough Flow!";
                 else
                 {
@@ -349,7 +342,7 @@ public class BattleManager : MonoBehaviour
                     flowHeal.interactable = true;
                     cancelFlow.interactable = true;
                     playerScript.SetFlowMove(flowMove.Unselected);
-                    timer = 0;
+                    BattleStats.Timer = 0;
                 }
             }
         }
@@ -366,8 +359,8 @@ public class BattleManager : MonoBehaviour
             }
             else if (playerScript.GetFlowPoints() < 12)
             {
-                timer += Time.deltaTime;
-                if (timer > 0 && timer < buffer)
+                BattleStats.Timer += Time.deltaTime;
+                if (BattleStats.Timer > 0 && BattleStats.Timer < BattleStats.Buffer)
                     battleText.text = "Not enough Flow!";
                 else
                 {
@@ -375,13 +368,13 @@ public class BattleManager : MonoBehaviour
                     flowHeal.interactable = true;
                     cancelFlow.interactable = true;
                     playerScript.SetFlowMove(flowMove.Unselected);
-                    timer = 0;
+                    BattleStats.Timer = 0;
                 }
             }
             else if (playerScript.GetHitPoints() >= playerScript.GetMaxHitPoints())
             {
-                timer += Time.deltaTime;
-                if (timer > 0 && timer < buffer)
+                BattleStats.Timer += Time.deltaTime;
+                if (BattleStats.Timer > 0 && BattleStats.Timer < BattleStats.Buffer)
                     battleText.text = "Your health is already full!";
                 else
                 {
@@ -389,18 +382,18 @@ public class BattleManager : MonoBehaviour
                     flowHeal.interactable = true;
                     cancelFlow.interactable = true;
                     playerScript.SetFlowMove(flowMove.Unselected);
-                    timer = 0;
+                    BattleStats.Timer = 0;
                 }
             }
         }
     }
     public void ProcessFlowAttack()
     {
-        timer += Time.deltaTime;
+        BattleStats.Timer += Time.deltaTime;
         Enemy targetScript = target.GetComponent<Enemy>();
-        if (timer > 0 && timer < buffer)
+        if (BattleStats.Timer > 0 && BattleStats.Timer < BattleStats.Buffer)
             battleText.text = "You fire your revolver!";
-        else if (timer >= buffer)
+        else if (BattleStats.Timer >= BattleStats.Buffer)
         {
             if (!gotAttackRolls)
             {
@@ -417,7 +410,7 @@ public class BattleManager : MonoBehaviour
                 battleText.text += " A critical hit!!!";
             if (damage == 0)
                 battleText.text += target.name + " dodged your attack!";
-            if (timer >= buffer * 1.75)
+            if (BattleStats.Timer >= BattleStats.Buffer * 1.75)
             {
                 targetScript.ModifyHealth(-damage);
                 playerScript.ModifyFlow(-9);
@@ -428,10 +421,10 @@ public class BattleManager : MonoBehaviour
     }
     public void ProcessFlowHeal()
     {
-        timer += Time.deltaTime;
-        if (timer > 0 && timer < buffer)
+        BattleStats.Timer += Time.deltaTime;
+        if (BattleStats.Timer > 0 && BattleStats.Timer < BattleStats.Buffer)
             battleText.text = "You heal yourself!";
-        else if (timer >= buffer)
+        else if (BattleStats.Timer >= BattleStats.Buffer)
         {
             if (!gotAttackRolls)
             {
@@ -441,7 +434,7 @@ public class BattleManager : MonoBehaviour
                 gotAttackRolls = true;
             }
             battleText.text = "You healed yourself for " + damage + " points!";
-            if (timer >= buffer * 1.75)
+            if (BattleStats.Timer >= BattleStats.Buffer * 1.75)
             {
                 playerScript.ModifyHealth(damage);
                 playerScript.ModifyFlow(-12);
@@ -479,10 +472,10 @@ public class BattleManager : MonoBehaviour
 
         if (enemyScript.healChance >= 1)
         {
-            timer += Time.deltaTime;
-            if (timer > 0 && timer < buffer)
+            BattleStats.Timer += Time.deltaTime;
+            if (BattleStats.Timer > 0 && BattleStats.Timer < BattleStats.Buffer)
                 battleText.text = enemyScript.name + " heals themselves!\nHeal Chance: " + enemyScript.healChance;
-            else if (timer >= buffer)
+            else if (BattleStats.Timer >= BattleStats.Buffer)
             {
                 if (!gotAttackRolls)
                 {
@@ -491,7 +484,7 @@ public class BattleManager : MonoBehaviour
                     enemyScript.healedLastTurn = true;
                 }
                 battleText.text = enemyScript.name + " healed for " + damage + " points!";
-                if (timer >= buffer * 1.75)
+                if (BattleStats.Timer >= BattleStats.Buffer * 1.75)
                 {
                     enemyScript.ModifyHealth(damage);
                     if (!endConditionsMet)
@@ -501,10 +494,10 @@ public class BattleManager : MonoBehaviour
         }
         else
         {
-            timer += Time.deltaTime;
-            if (timer > 0 && timer < buffer)
+            BattleStats.Timer += Time.deltaTime;
+            if (BattleStats.Timer > 0 && BattleStats.Timer < BattleStats.Buffer)
                 battleText.text = enemyScript.name + " attacks!\nHeal Chance: " + enemyScript.healChance;
-            else if (timer >= buffer)
+            else if (BattleStats.Timer >= BattleStats.Buffer)
             {
                 if (!gotAttackRolls)
                 {
@@ -521,7 +514,7 @@ public class BattleManager : MonoBehaviour
                     battleText.text += "A critical hit!!!";
                 if (damage == 0)
                     battleText.text += "You dodged " + enemyScript.name + "'s attack!";
-                if (timer >= buffer * 1.75)
+                if (BattleStats.Timer >= BattleStats.Buffer * 1.75)
                 {
                     playerScript.ModifyHealth(-damage);
                     if (!endConditionsMet)
@@ -607,11 +600,11 @@ public class BattleManager : MonoBehaviour
         }
         else if (allEnemies.Count == 0)
         {
-            timer += Time.deltaTime;
+            BattleStats.Timer += Time.deltaTime;
             endConditionsMet = true;
-            if (timer > 0 && timer < buffer)
+            if (BattleStats.Timer > 0 && BattleStats.Timer < BattleStats.Buffer)
                 battleText.text = "You win!";
-            else if (timer >= buffer)
+            else if (BattleStats.Timer >= BattleStats.Buffer)
                 ToOverworld();
         }
         if (endConditionsMet)

@@ -16,7 +16,9 @@ public class Weapon : Item
     [SerializeField] private MentalEffect mentEffect;
     [SerializeField] private SpirutalEffect spiritEffect;
     [SerializeField] private int baseDamage;
+    [SerializeField] private int accuracyModifier;
     [SerializeField] private string itemName;
 
     public int GetBaseDamage() { return baseDamage; }
+    public int GetAccuracy() { return accuracyModifier; }
 }

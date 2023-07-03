@@ -7,9 +7,15 @@ public class Enemy : Character
 {
     [SerializeField] int attackDamage;
     [SerializeField] bool isBoss;
-    [SerializeField] TextMeshProUGUI enemyName;
+    [SerializeField] string enemyName;
+    [SerializeField] TextMeshProUGUI enemyNameTMP;
     public float healChance = 0.0f;
     public bool healedLastTurn = false;
+
+    public void SetUpEnemy()
+    {
+        enemyNameTMP.text = enemyName;
+    }
 
     public void Attack(out int totalDamage, out int accuracy)
     {
@@ -34,5 +40,6 @@ public class Enemy : Character
         totalDamage = Random.Range(baseDamage - (baseDamage / 5), baseDamage + (baseDamage / 5));
         //ModifyFlow(-flowCost);
     }
-    public void SetEnemyName(string name) { enemyName.text = name; }
+    public void SetEnemyName(string name) { enemyName = name; enemyNameTMP.text = enemyName; }
+    public string GetEnemyName() { return enemyName; }
 }

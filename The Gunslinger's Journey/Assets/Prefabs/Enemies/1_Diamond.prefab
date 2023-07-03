@@ -417,7 +417,7 @@ GameObject:
   - component: {fileID: 1521976877275214140}
   - component: {fileID: 7671807074157808580}
   m_Layer: 0
-  m_Name: Diamond
+  m_Name: 1_Diamond
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -516,17 +516,18 @@ MonoBehaviour:
   speedSkillPoints: 0
   charismaSkillPoints: 0
   defenseSkillPoints: 0
-  swiftnessStat: 12
-  gritStat: 14
-  eloquenceStat: 11
-  aptitudeStat: 12
-  insightStat: 12
-  vigorStat: 12
+  swiftnessStat: 8
+  gritStat: 9
+  eloquenceStat: 7
+  aptitudeStat: 7
+  insightStat: 7
+  vigorStat: 8
   healthBar: {fileID: 8559566456588818166}
   flowBar: {fileID: 0}
   attackDamage: 5
   isBoss: 0
-  enemyName: {fileID: 4460251622615815064}
+  enemyName: DiaMan
+  enemyNameTMP: {fileID: 4460251622615815064}
   healChance: 0
   healedLastTurn: 0
 --- !u!60 &1521976877275214140
