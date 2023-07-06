@@ -618,6 +618,7 @@ public class BattleManager : MonoBehaviour
         PlayerStats.Health = playerScript.GetHitPoints();
         PlayerStats.Flow = playerScript.GetFlowPoints();
         SceneManager.LoadScene(1);
+        
     }
 }
 
