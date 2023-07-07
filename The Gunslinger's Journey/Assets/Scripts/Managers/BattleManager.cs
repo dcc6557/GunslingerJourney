@@ -449,7 +449,7 @@ public class BattleManager : MonoBehaviour
         Enemy enemyScript = enemy.GetComponent<Enemy>();
         float healthPercentage = (float)enemyScript.GetHitPoints() / enemyScript.GetMaxHitPoints();
 
-        if (!gotHealChance)
+        if (!gotHealChance && enemyScript.CanHeal())
         {
             if (!enemyScript.healedLastTurn && enemyScript.GetMaxHitPoints() - enemyScript.GetHitPoints() != 0)
             {
@@ -474,7 +474,7 @@ public class BattleManager : MonoBehaviour
         {
             BattleStats.Timer += Time.deltaTime;
             if (BattleStats.Timer > 0 && BattleStats.Timer < BattleStats.Buffer)
-                battleText.text = enemyScript.name + " heals themselves!\nHeal Chance: " + enemyScript.healChance;
+                battleText.text = enemyScript.name + " heals themself!\nHeal Chance: " + enemyScript.healChance;
             else if (BattleStats.Timer >= BattleStats.Buffer)
             {
                 if (!gotAttackRolls)

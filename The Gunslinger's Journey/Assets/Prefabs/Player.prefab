@@ -119,12 +119,12 @@ MonoBehaviour:
   speedSkillPoints: 0
   charismaSkillPoints: 0
   defenseSkillPoints: 0
-  swiftnessStat: 15
-  gritStat: 15
-  eloquenceStat: 15
-  aptitudeStat: 15
-  insightStat: 15
-  vigorStat: 15
+  swiftnessStat: 9
+  gritStat: 9
+  eloquenceStat: 9
+  aptitudeStat: 9
+  insightStat: 9
+  vigorStat: 9
   healthBar: {fileID: 4037481355070509025}
   flowBar: {fileID: 470386521415775105}
   weapon: {fileID: 4964493578412413105, guid: ec798a224b3519f40839f2a461abdd76, type: 3}

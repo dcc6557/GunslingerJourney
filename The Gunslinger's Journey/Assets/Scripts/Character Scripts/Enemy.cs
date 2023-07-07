@@ -9,6 +9,7 @@ public class Enemy : Character
     [SerializeField] bool isBoss;
     [SerializeField] string enemyName;
     [SerializeField] TextMeshProUGUI enemyNameTMP;
+    [SerializeField] bool canHeal;
     public float healChance = 0.0f;
     public bool healedLastTurn = false;
 
@@ -42,4 +43,5 @@ public class Enemy : Character
     }
     public void SetEnemyName(string name) { enemyName = name; enemyNameTMP.text = enemyName; }
     public string GetEnemyName() { return enemyName; }
+    public bool CanHeal() { return canHeal; }
 }
