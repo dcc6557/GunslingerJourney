@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 57690d78d9f20d3449ea94a945aab01b
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - diamanPrefab: {fileID: 5515781247355870330, guid: 4a6b8f79e9a724349beb7c600441b21a, type: 3}
+  - sirkillPrefab: {fileID: 4451686980381852690, guid: 46c599c5a9be6d54295f9951bc97e14b, type: 3}
+  - spawnableAreaTilemap: {instanceID: 0}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

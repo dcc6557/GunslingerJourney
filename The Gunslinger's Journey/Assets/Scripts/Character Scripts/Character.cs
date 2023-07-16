@@ -6,13 +6,14 @@ using UnityEngine.UI;
 public class Character : MonoBehaviour
 {
     [SerializeField] protected int level;
-    [SerializeField] protected int hitPoints, flowPoints;
-    [SerializeField] protected int maxHitPoints, maxFlowPoints, powerSkillPoints, fluiditySkillPoints, accuracySkillPoints, resistanceSkillPoints, evasionSkillPoints, speedSkillPoints, charismaSkillPoints, defenseSkillPoints;
     [SerializeField] protected int swiftnessStat, gritStat, eloquenceStat, aptitudeStat, insightStat, vigorStat;
     [SerializeField] public Slider healthBar;
     [SerializeField] public Slider flowBar;
+    protected int hitPoints, flowPoints;
     protected bool myTurn = false;
     protected bool isDead = false;
+    protected int maxHitPoints, maxFlowPoints, powerSkillPoints, fluiditySkillPoints, accuracySkillPoints, resistanceSkillPoints, evasionSkillPoints, speedSkillPoints, charismaSkillPoints, defenseSkillPoints;
+
 
     virtual public void SetUpCharacter(int currentHP = -1, int currentFP = -1)
     {

@@ -189,7 +189,7 @@ public class BattleManager : MonoBehaviour
         allEnemies.Add(Instantiate(prefab));
         int x = allEnemies.Count - 1;
         allEnemies[x].transform.position = position;
-        allEnemies[x].GetComponent<Enemy>().SetUpEnemy();
+        allEnemies[x].GetComponent<Enemy>().SetUpEnemyBattle();
         allEnemies[x].name = allEnemies[x].GetComponent<Enemy>().GetEnemyName();
         allEnemyTargets.Add(Instantiate(buttonPrefab));
 

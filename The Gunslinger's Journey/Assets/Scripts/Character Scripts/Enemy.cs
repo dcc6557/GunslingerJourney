@@ -12,10 +12,18 @@ public class Enemy : Character
     [SerializeField] bool canHeal;
     public float healChance = 0.0f;
     public bool healedLastTurn = false;
+    bool inOverworld;
 
-    public void SetUpEnemy()
+    public void SetUpEnemyBattle()
     {
         enemyNameTMP.text = enemyName;
+        inOverworld = false;
+    }
+    public void SetUpEnemyOverworld()
+    {
+        enemyNameTMP.enabled = false;
+        healthBar.gameObject.SetActive(false);
+        inOverworld = true;
     }
 
     public void Attack(out int totalDamage, out int accuracy)

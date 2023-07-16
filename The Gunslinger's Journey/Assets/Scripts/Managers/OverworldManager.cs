@@ -12,6 +12,8 @@ public class OverworldManager : MonoBehaviour
     [SerializeField] private GameObject playerPrefab;
     [SerializeField] private Camera mainCamera;
     [SerializeField] private Tilemap wallTiles;
+    [SerializeField] private Tilemap floorTiles;
+    [SerializeField] private EnemyManager enemyManager;
     private Player playerScript;
     private Vector2 xMove = new Vector3(2f, 0.0f);
     private Vector2 yMove = new Vector3(0.0f, 2f);
@@ -36,6 +38,7 @@ public class OverworldManager : MonoBehaviour
         playerScript.SetUpCharacter(PlayerStats.Health, PlayerStats.Flow);
         playerScript.ModifyHealth();
         playerScript.ModifyFlow();
+        enemyManager.MakeEnemies();
 
     }
 

@@ -2806,8 +2806,6 @@ MonoBehaviour:
   cancelFlow: {fileID: 1178886958}
   cancelTarget: {fileID: 709788367}
   currentTurn: 0
-  timer: 0
-  buffer: 3
 --- !u!4 &2127715290
 Transform:
   m_ObjectHideFlags: 0
