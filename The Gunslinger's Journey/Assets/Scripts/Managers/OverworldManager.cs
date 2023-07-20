@@ -14,6 +14,7 @@ public class OverworldManager : MonoBehaviour
     [SerializeField] private Tilemap wallTiles;
     [SerializeField] private Tilemap floorTiles;
     [SerializeField] private EnemyManager enemyManager;
+    bool frameAfterStart = false;
     private Player playerScript;
     private Vector2 xMove = new Vector3(2f, 0.0f);
     private Vector2 yMove = new Vector3(0.0f, 2f);
@@ -22,6 +23,9 @@ public class OverworldManager : MonoBehaviour
     private Vector3 playerWorldPosition;
     private Vector3 cameraLocalPosition;
     private Vector3 cameraWorldPosition;
+    [SerializeField] private List<GameObject> allGameObjects;
+    [SerializeField] private List<GameObject> allEnemies;
+    public GameObject enemyToFight;
 
     // Start is called before the first frame update
     void Start()
@@ -39,7 +43,17 @@ public class OverworldManager : MonoBehaviour
         playerScript.ModifyHealth();
         playerScript.ModifyFlow();
         enemyManager.MakeEnemies();
-
+        allGameObjects = new List<GameObject>();
+        allEnemies = new List<GameObject>();
+        allGameObjects.AddRange(FindObjectsOfType<GameObject>());
+        foreach (GameObject obj in allGameObjects)
+        {
+            if (obj.TryGetComponent<Enemy>(out Enemy script))
+            {
+                allEnemies.Add(obj);
+            }
+        }
+        enemyManager.SpawnEnemies();
     }
 
     // Update is called once per frame
@@ -53,12 +67,26 @@ public class OverworldManager : MonoBehaviour
         if (Input.GetKey(KeyCode.S)) { playerCollider.velocity -= yMove; }
         if (Input.GetKey(KeyCode.A)) { playerCollider.velocity -= xMove; }
         if (Input.GetKey(KeyCode.D)) { playerCollider.velocity += xMove; }
-        if (Input.GetKey(KeyCode.BackQuote)) { ToBattle(); }
+        //if (Input.GetKeyDown(KeyCode.BackQuote)) { playerScript.FlowHeal(); }
         PlayerStats.XCoordinate = playerWorldPosition.x;
         PlayerStats.YCoordinate = playerWorldPosition.y;
+        foreach (GameObject foe in allEnemies)
+        {
+            Rigidbody2D foeRigidBody = foe.GetComponent<Rigidbody2D>();
+            List<Collider2D> listOfContacts = new List<Collider2D>();
+            int numOfContacts = foe.GetComponent<Rigidbody2D>().GetContacts(listOfContacts);
+            Debug.Log(numOfContacts);
+
+            if (playerCollider.IsTouching(foeRigidBody.GetComponent<Collider2D>()))
+                ToBattle(foe);
+            else if (numOfContacts > 0)
+                enemyManager.RespawnEnemy(foe);
+        }
     }
-    private void ToBattle()
+    private void ToBattle(GameObject enemy)
     {
+        enemyToFight = enemy;
+        DontDestroyOnLoad(enemyToFight);
         PlayerStats.Health = playerScript.GetHitPoints();
         PlayerStats.Flow = playerScript.GetFlowPoints();
         BattleStats.Timer = 0;

@@ -12,7 +12,6 @@ public enum playerAction { Unselected, Attack, Block, Flow }
 public class BattleManager : MonoBehaviour
 {
     [SerializeField] private GameObject playerPrefab;
-    [SerializeField] private GameObject diamondPrefab;
     [SerializeField] private Button targetButtonPrefab;
     [SerializeField] private Canvas BattleUI;
     [SerializeField] private Image flowPanel;
@@ -26,6 +25,8 @@ public class BattleManager : MonoBehaviour
     [SerializeField] private Button flowAttack;
     [SerializeField] private Button cancelFlow;
     [SerializeField] private Button cancelTarget;
+    List<GameObject> survivingGameObjects;
+    List<GameObject> survivingEnemies;
     private OverworldManager overworldScript;
     bool endConditionsMet = false;
     bool gotAttackRolls = false;
@@ -37,12 +38,29 @@ public class BattleManager : MonoBehaviour
     private Player playerScript;
     private List<GameObject> allEnemies;
     private List<Button> allEnemyTargets;
+    [SerializeField] GameObject enemyToFight;
     GameObject playerObject;
     GameObject target;
     bool gotHealChance = false;
     int damage;
     int accuracy;
     int evasion;
+
+
+    private void Awake()
+    {
+        survivingGameObjects = new List<GameObject>();
+        survivingGameObjects.AddRange(FindObjectsOfType<GameObject>());
+        survivingEnemies = new List<GameObject>();
+        foreach (GameObject obj in survivingGameObjects)
+        {
+            if (obj.TryGetComponent<Enemy>(out Enemy script))
+            {
+                survivingEnemies.Add(obj);
+            }
+        }
+        OverworldStats.TotalEnemies -= survivingEnemies.Count;
+    }
 
     void Start()
     {
@@ -60,7 +78,11 @@ public class BattleManager : MonoBehaviour
 
         //AddEnemyToList(diamondPrefab, new Vector3(2.5f, 1.75f), "DiaMan", targetButtonPrefab);
 
-        AddEnemyToList(diamondPrefab, new Vector3(2.1f, -1.0f), targetButtonPrefab);
+        foreach (GameObject foe in survivingEnemies)
+        {
+            AddEnemyToList(foe, new Vector3(Random.Range(1.8f, 2.9f), Random.Range(-1.0f, 1.0f)), targetButtonPrefab);
+            Destroy(foe);
+        }
 
         for (int x = 0; x < allEnemies.Count; x++)
         {
@@ -184,9 +206,9 @@ public class BattleManager : MonoBehaviour
         button.onClick.AddListener(() => HideTargets());
 
     }
-    public void AddEnemyToList(GameObject prefab, Vector3 position, Button buttonPrefab)
+    public void AddEnemyToList(GameObject enemyFromOverworld, Vector3 position, Button buttonPrefab)
     {
-        allEnemies.Add(Instantiate(prefab));
+        allEnemies.Add(Instantiate(enemyFromOverworld));
         int x = allEnemies.Count - 1;
         allEnemies[x].transform.position = position;
         allEnemies[x].GetComponent<Enemy>().SetUpEnemyBattle();
@@ -618,7 +640,6 @@ public class BattleManager : MonoBehaviour
         PlayerStats.Health = playerScript.GetHitPoints();
         PlayerStats.Flow = playerScript.GetFlowPoints();
         SceneManager.LoadScene(1);
-        
     }
 }
 

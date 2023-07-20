@@ -17,6 +17,8 @@ public class Enemy : Character
     public void SetUpEnemyBattle()
     {
         enemyNameTMP.text = enemyName;
+        enemyNameTMP.enabled = true;
+        healthBar.gameObject.SetActive(true);
         inOverworld = false;
     }
     public void SetUpEnemyOverworld()
