@@ -348,7 +348,7 @@ public class BattleManager : MonoBehaviour
                     SelectEnemyTarget();
                 }
                 else
-                    ProcessFlowAttack();
+                    ProcessFlowAttack(target);
             }
             else
             {
@@ -409,7 +409,7 @@ public class BattleManager : MonoBehaviour
             }
         }
     }
-    public void ProcessFlowAttack()
+    public void ProcessFlowAttack(GameObject foe)
     {
         BattleStats.Timer += Time.deltaTime;
         Enemy targetScript = target.GetComponent<Enemy>();
