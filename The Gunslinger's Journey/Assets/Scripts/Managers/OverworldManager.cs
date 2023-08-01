@@ -90,6 +90,6 @@ public class OverworldManager : MonoBehaviour
         PlayerStats.Health = playerScript.GetHitPoints();
         PlayerStats.Flow = playerScript.GetFlowPoints();
         BattleStats.Timer = 0;
-        SceneManager.LoadScene(0);
+        SceneManager.LoadScene(2);
     }
 }
