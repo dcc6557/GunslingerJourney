@@ -67,7 +67,7 @@ public class OverworldManager : MonoBehaviour
         if (Input.GetKey(KeyCode.S)) { playerCollider.velocity -= yMove; }
         if (Input.GetKey(KeyCode.A)) { playerCollider.velocity -= xMove; }
         if (Input.GetKey(KeyCode.D)) { playerCollider.velocity += xMove; }
-        //if (Input.GetKeyDown(KeyCode.BackQuote)) { playerScript.FlowHeal(); }
+        if (Input.GetKeyDown(KeyCode.BackQuote)) { TryHeal(); }
         PlayerStats.XCoordinate = playerWorldPosition.x;
         PlayerStats.YCoordinate = playerWorldPosition.y;
         foreach (GameObject foe in allEnemies)
@@ -75,7 +75,6 @@ public class OverworldManager : MonoBehaviour
             Rigidbody2D foeRigidBody = foe.GetComponent<Rigidbody2D>();
             List<Collider2D> listOfContacts = new List<Collider2D>();
             int numOfContacts = foe.GetComponent<Rigidbody2D>().GetContacts(listOfContacts);
-            Debug.Log(numOfContacts);
 
             if (playerCollider.IsTouching(foeRigidBody.GetComponent<Collider2D>()))
                 ToBattle(foe);
@@ -91,5 +90,22 @@ public class OverworldManager : MonoBehaviour
         PlayerStats.Flow = playerScript.GetFlowPoints();
         BattleStats.Timer = 0;
         SceneManager.LoadScene(2);
+    }
+    private void TryHeal()
+    {
+        if (playerScript.GetFlowPoints() < 12)
+        {
+            Debug.Log("Not enough Flow!!!");
+        }
+        else if (playerScript.GetHitPoints() == playerScript.GetMaxHitPoints())
+        {
+            Debug.Log("Health is full!!!");
+        }
+        else
+        {
+            playerScript.FlowHeal();
+            playerScript.ModifyFlow(-12);
+            playerScript.ModifyHealth();
+        }
     }
 }

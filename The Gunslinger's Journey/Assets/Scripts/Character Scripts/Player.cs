@@ -42,7 +42,6 @@ public class Player : Character
     public void FlowHeal()
     {
         int totalRecovery;
-        flowMove = flowMove.Heal;
         int baseHeal = (maxHitPoints / 10) + fluiditySkillPoints;
         totalRecovery = Random.Range(baseHeal - (baseHeal / 5), baseHeal + (baseHeal / 5));
         hitPoints += totalRecovery;
