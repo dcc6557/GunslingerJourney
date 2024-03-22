@@ -46,7 +46,6 @@ public class EnemyManager : MonoBehaviour
                 numOfContacts = foe.GetComponent<Rigidbody2D>().GetContacts(pointsOfContact);
                 Debug.Log(foe.name + " points of contact: " + numOfContacts);
             } while (numOfContacts > 0);
-            
         }
     }
     public void RespawnEnemy(GameObject foe) { foe.transform.position = GetRandomTile(); }

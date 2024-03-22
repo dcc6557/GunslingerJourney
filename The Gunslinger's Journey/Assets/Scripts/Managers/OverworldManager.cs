@@ -6,10 +6,12 @@ using UnityEngine.UI;
 using TMPro;
 using UnityEngine.Tilemaps;
 using UnityEngine.SceneManagement;
+using UnityEditor.Timeline;
 
 public class OverworldManager : MonoBehaviour
 {
     [SerializeField] private GameObject playerPrefab;
+    [SerializeField] private GameObject exitPrefab;
     [SerializeField] private Camera mainCamera;
     [SerializeField] private Tilemap wallTiles;
     [SerializeField] private Tilemap floorTiles;
@@ -20,18 +22,41 @@ public class OverworldManager : MonoBehaviour
     private Vector2 yMove = new Vector3(0.0f, 2f);
     GameObject playerObject;
     Rigidbody2D playerCollider;
+    GameObject exitObject;
+    Rigidbody2D exitCollider;
     private Vector3 playerWorldPosition;
     private Vector3 cameraLocalPosition;
     private Vector3 cameraWorldPosition;
     [SerializeField] private List<GameObject> allGameObjects;
     [SerializeField] private List<GameObject> allEnemies;
     public GameObject enemyToFight;
+    BoundsInt spawnBounds;
 
     // Start is called before the first frame update
     void Start()
     {
         playerObject = Instantiate(playerPrefab);
-        playerObject.transform.position = new Vector3(PlayerStats.XCoordinate, PlayerStats.YCoordinate);
+        exitObject = Instantiate(exitPrefab);
+        spawnBounds = floorTiles.cellBounds;
+
+        if (PlayerStats.SpawnSet) { Respawn(playerObject, PlayerStats.XCoordinate, PlayerStats.YCoordinate); }
+        else
+        {
+            Spawn(playerObject, true);
+            PlayerStats.XCoordinate = playerObject.transform.position.x;
+            PlayerStats.YCoordinate = playerObject.transform.position.y;
+            PlayerStats.SpawnSet = true;
+        }
+
+        if (OverworldStats.ExitSet) { Respawn(exitObject, OverworldStats.XCoordinateExit, OverworldStats.YCoordinateExit); }
+        else
+        {
+            Spawn(exitObject);
+            OverworldStats.XCoordinateExit = exitObject.transform.position.x;
+            OverworldStats.YCoordinateExit = exitObject.transform.position.y;
+            OverworldStats.ExitSet = true;
+        }
+
         playerScript = playerObject.GetComponent<Player>();
         playerCollider = playerObject.GetComponent<Rigidbody2D>();
         mainCamera.transform.SetParent(playerObject.transform);
@@ -54,6 +79,7 @@ public class OverworldManager : MonoBehaviour
             }
         }
         enemyManager.SpawnEnemies();
+
     }
 
     // Update is called once per frame
@@ -81,6 +107,8 @@ public class OverworldManager : MonoBehaviour
             else if (numOfContacts > 0)
                 enemyManager.RespawnEnemy(foe);
         }
+        if (playerCollider.IsTouching(exitObject.GetComponent<Collider2D>()))
+            ToExit();
     }
     private void ToBattle(GameObject enemy)
     {
@@ -90,6 +118,12 @@ public class OverworldManager : MonoBehaviour
         PlayerStats.Flow = playerScript.GetFlowPoints();
         BattleStats.Timer = 0;
         SceneManager.LoadScene(2);
+    }
+    private void ToExit()
+    {
+        OverworldStats.ExitSet = false;
+        PlayerStats.SpawnSet = false;
+        SceneManager.LoadScene(0);
     }
     private void TryHeal()
     {
@@ -107,5 +141,48 @@ public class OverworldManager : MonoBehaviour
             playerScript.ModifyFlow(-12);
             playerScript.ModifyHealth();
         }
+    }
+
+    public void Spawn(GameObject thingToSpawn, bool isPlayer = false)
+    {
+        int numOfContacts;
+        do
+        {
+            List<Collider2D> pointsOfContact = new List<Collider2D>();
+            thingToSpawn.transform.position = GetRandomTile(isPlayer);
+            numOfContacts = thingToSpawn.GetComponent<Rigidbody2D>().GetContacts(pointsOfContact);
+            Debug.Log(thingToSpawn.name + " points of contact: " + numOfContacts);
+        } while (numOfContacts > 0);
+    }
+    public void Respawn(GameObject thingToRespawn, float x, float y) { thingToRespawn.transform.position = new Vector3(x, y); }
+    private Vector3Int GetRandomTile(bool isPlayer)
+    {
+        Vector3Int randomTile = Vector3Int.zero;
+        bool ableToSpawn = false;
+        while (!ableToSpawn)
+        {
+            ableToSpawn = true;
+            randomTile = new Vector3Int(Random.Range(spawnBounds.xMin, spawnBounds.xMax), Random.Range(spawnBounds.yMin, spawnBounds.yMax));
+            if (!floorTiles.HasTile(randomTile) || CheckIfNearWall(randomTile))
+                ableToSpawn = false;
+            if (!isPlayer)
+            {
+                if (Vector3.Distance(randomTile, new Vector3(PlayerStats.XCoordinate, PlayerStats.YCoordinate)) < 5)
+                    ableToSpawn = false;
+            }
+        }
+        return randomTile;
+    }
+    private bool CheckIfNearWall(Vector3Int tile)
+    {
+        if (wallTiles.HasTile(new Vector3Int(tile.x - 1, tile.y)))
+            return true;
+        else if (wallTiles.HasTile(new Vector3Int(tile.x + 1, tile.y)))
+            return true;
+        else if (wallTiles.HasTile(new Vector3Int(tile.x, tile.y - 1)))
+            return true;
+        else if (wallTiles.HasTile(new Vector3Int(tile.x, tile.y + 1)))
+            return true;
+        return false;
     }
 }
