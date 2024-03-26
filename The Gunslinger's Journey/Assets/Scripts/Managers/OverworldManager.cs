@@ -12,6 +12,7 @@ public class OverworldManager : MonoBehaviour
 {
     [SerializeField] private GameObject playerPrefab;
     [SerializeField] private GameObject exitPrefab;
+    [SerializeField] private GameObject keyPrefab;
     [SerializeField] private Camera mainCamera;
     [SerializeField] private Tilemap wallTiles;
     [SerializeField] private Tilemap floorTiles;
@@ -23,7 +24,7 @@ public class OverworldManager : MonoBehaviour
     GameObject playerObject;
     Rigidbody2D playerCollider;
     GameObject exitObject;
-    Rigidbody2D exitCollider;
+    GameObject keyObject;
     private Vector3 playerWorldPosition;
     private Vector3 cameraLocalPosition;
     private Vector3 cameraWorldPosition;
@@ -37,6 +38,7 @@ public class OverworldManager : MonoBehaviour
     {
         playerObject = Instantiate(playerPrefab);
         exitObject = Instantiate(exitPrefab);
+        keyObject = Instantiate(keyPrefab);
         spawnBounds = floorTiles.cellBounds;
 
         if (PlayerStats.SpawnSet) { Respawn(playerObject, PlayerStats.XCoordinate, PlayerStats.YCoordinate); }
@@ -57,6 +59,18 @@ public class OverworldManager : MonoBehaviour
             OverworldStats.ExitSet = true;
         }
 
+        if (!OverworldStats.CanExit)
+        {
+            if (OverworldStats.KeySet) { Respawn(keyObject, OverworldStats.XCoordinateKey, OverworldStats.YCoordinateKey); }
+            else
+            {
+                Spawn(keyObject);
+                OverworldStats.XCoordinateKey = keyObject.transform.position.x;
+                OverworldStats.YCoordinateKey = keyObject.transform.position.y;
+                OverworldStats.KeySet = true;
+            }
+        }
+
         playerScript = playerObject.GetComponent<Player>();
         playerCollider = playerObject.GetComponent<Rigidbody2D>();
         mainCamera.transform.SetParent(playerObject.transform);
@@ -71,15 +85,11 @@ public class OverworldManager : MonoBehaviour
         allGameObjects = new List<GameObject>();
         allEnemies = new List<GameObject>();
         allGameObjects.AddRange(FindObjectsOfType<GameObject>());
-        foreach (GameObject obj in allGameObjects)
-        {
-            if (obj.TryGetComponent<Enemy>(out Enemy script))
-            {
-                allEnemies.Add(obj);
-            }
+
+        foreach (GameObject obj in allGameObjects) {
+            if (obj.TryGetComponent<Enemy>(out Enemy script)) { allEnemies.Add(obj);}
         }
         enemyManager.SpawnEnemies();
-
     }
 
     // Update is called once per frame
@@ -107,8 +117,13 @@ public class OverworldManager : MonoBehaviour
             else if (numOfContacts > 0)
                 enemyManager.RespawnEnemy(foe);
         }
-        if (playerCollider.IsTouching(exitObject.GetComponent<Collider2D>()))
+        if (playerCollider.IsTouching(exitObject.GetComponent<Collider2D>()) && OverworldStats.CanExit)
             ToExit();
+        if (playerCollider.IsTouching(keyObject.GetComponent<Collider2D>()))
+        {
+            keyObject.SetActive(false);
+            OverworldStats.CanExit = true;
+        }
     }
     private void ToBattle(GameObject enemy)
     {
@@ -121,8 +136,7 @@ public class OverworldManager : MonoBehaviour
     }
     private void ToExit()
     {
-        OverworldStats.ExitSet = false;
-        PlayerStats.SpawnSet = false;
+        ResetOverworldVariables();
         SceneManager.LoadScene(0);
     }
     private void TryHeal()
@@ -184,5 +198,13 @@ public class OverworldManager : MonoBehaviour
         else if (wallTiles.HasTile(new Vector3Int(tile.x, tile.y + 1)))
             return true;
         return false;
+    }
+    private void ResetOverworldVariables()
+    {
+        OverworldStats.ExitSet = false;
+        OverworldStats.KeySet = false;
+        OverworldStats.CanExit = false;
+        PlayerStats.SpawnSet = false;
+
     }
 }

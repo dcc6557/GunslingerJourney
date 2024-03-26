@@ -154,6 +154,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerPrefab: {fileID: 304461599755389747, guid: ede5e0988b6c0654281cf03743d10f43, type: 3}
   exitPrefab: {fileID: 645167579026942440, guid: 6a9026029af875a4f9a83de93c1a01e4, type: 3}
+  keyPrefab: {fileID: 7585436214362274484, guid: e17aaa3586523b041b9f670c529b595d, type: 3}
   mainCamera: {fileID: 535505787}
   wallTiles: {fileID: 251052146}
   floorTiles: {fileID: 1437897557}
@@ -5115,7 +5116,7 @@ Camera:
   m_Enabled: 1
   serializedVersion: 2
   m_ClearFlags: 1
-  m_BackGroundColor: {r: 0.19215687, g: 0.3019608, b: 0.4745098, a: 0}
+  m_BackGroundColor: {r: 0.01886791, g: 0.01886791, b: 0.01886791, a: 0}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
   m_FOVAxisMode: 1
